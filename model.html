@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modeling - CollaborAML</title>
+  <style>
+    /* CSS kamu tetap sama */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f0f0;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 180px;
+      background-color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+    .sidebar-header, .user-info-bar, .nav, .logout {
+      padding: 15px;
+    }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+    }
+    .sidebar-header img.logo {
+      width: 26px;
+      margin-right: 8px;
+    }
+    .sidebar-header span {
+      font-weight: bold;
+      color: #007bff;
+      font-size: 14px;
+    }
+    .user-info-bar {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+    }
+    .user-info-bar img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    .user-info-bar .name {
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .nav a {
+      display: block;
+      padding: 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      color: #007bff;
+      border: 1px solid #007bff;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .nav a.active,
+    .nav a:hover {
+      background-color: #007bff;
+      color: white;
+    }
+    .logout {
+      text-align: center;
+      padding: 10px;
+      border-top: 1px solid #eee;
+    }
+    .logout button {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 13px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 80%;
+      transition: background-color 0.3s ease;
+    }
+    .logout button:hover {
+      background-color: #c82333;
+    }
+    .main {
+      flex: 1;
+      padding: 20px;
+      background-color: #f5f5f5;
+      overflow-y: auto;
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 15px;
+    }
+    .card {
+      background-color: white;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      font-size: 14px;
+    }
+    .card h3 {
+      margin-top: 0;
+      font-size: 16px;
+    }
+    .status {
+      margin-top: 6px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    .status.success { color: #28a745; }
+    .status.failed { color: #dc3545; }
+    .status.ongoing { color: #ffc107; }
+    .status.pending { color: orange; }
+    .status.deployed { color: purple; }
+    .buttons {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
+    button {
+      flex: 1;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 0;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background-color 0.3s ease;
+    }
+    .btn-view {
+      background-color: #007bff;
+      color: white;
+    }
+    .btn-view:hover {
+      background-color: #0056b3;
+    }
+    .btn-edit {
+      background-color: #ffc107;
+      color: black;
+    }
+    .btn-edit:hover {
+      background-color: #e0a800;
+    }
+    .btn-delete {
+      background-color: #dc3545;
+      color: white;
+    }
+    .btn-delete:hover {
+      background-color: #bd2130;
+    }
+
+    /* Modal Styling */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 600px;
+      max-width: 95%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      position: relative;
+      font-size: 14px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 13px;
+      box-sizing: border-box;
+      resize: vertical;
+    }
+
+    label {
+      font-weight: bold;
+      font-size: 13px;
+      display: block;
+    }
+
+    .detail {
+      margin-bottom: 10px;
+      font-size: 14px;
+      white-space: pre-line;
+    }
+
+    #editForm {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 16px;
+    }
+    #editForm > button {
+      grid-column: span 2;
+      padding: 10px 0;
+      font-size: 14px;
+    }
+
+    #editIndex {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div>
+        <div class="sidebar-header">
+          <img src="image/logo.png" alt="Logo" class="logo" />
+          <span>COLLABORAML</span>
+        </div>
+        <div class="user-info-bar">
+          <img src="image/icon.jpg" alt="User" />
+          <span class="name">Aiko</span>
+        </div>
+        <div class="nav">
+          <a href="dashboard.html">Dashboard</a>
+          <a href="model.html" class="active">Modeling</a>
+          <a href="creation_entry.html">creation entry</a>
+          <a href="history.html">History</a>
+        </div>
+      </div>
+      <div class="logout">
+        <button onclick="alert('You have been logged out.')">Logout</button>
+      </div>
+    </div>
+
+    <div class="main">
+      <h2>Daftar Dataset Model</h2>
+      <div class="grid" id="modelGrid"></div>
+    </div>
+  </div>
+
+  <!-- Modal View -->
+  <div class="modal" id="viewModal" onclick="if(event.target === this) closeModal()">
+    <div class="modal-content">
+      <button class="close" onclick="closeModal()">Close</button>
+      <h3 id="modalTitle">Model Detail</h3>
+      <div class="detail"><strong>Input:</strong> <span id="modalInput"></span></div>
+      <div class="detail"><strong>Proses:</strong> <span id="modalProcess"></span></div>
+      <div class="detail"><strong>Output:</strong> <span id="modalOutput"></span></div>
+      <div class="detail"><strong>Algoritma:</strong> <span id="modalAlgorithm"></span></div>
+      <div class="detail"><strong>Akurasi:</strong> <span id="modalAccuracy"></span></div>
+      <div class="detail"><strong>Aktivitas Pemrosesan Data:</strong><br><span id="modalActivity"></span></div>
+    </div>
+  </div>
+
+  <!-- Modal Edit -->
+  <div class="modal" id="editModal" onclick="if(event.target === this) closeEditModal()">
+    <div class="modal-content">
+      <button class="close" onclick="closeEditModal()">Close</button>
+      <h3>Edit Model</h3>
+      <form id="editForm" onsubmit="saveEdit(event)">
+        <input type="hidden" id="editIndex" />
+
+        <label for="editTitle">Judul:</label>
+        <input type="text" id="editTitle" required />
+
+        <label for="editTarget">Target:</label>
+        <input type="text" id="editTarget" required />
+
+        <label for="editCategory">Kategori:</label>
+        <input type="text" id="editCategory" required />
+
+        <label for="editStatus">Status:</label>
+        <select id="editStatus" required>
+          <option value="success">Success</option>
+          <option value="ongoing">Ongoing</option>
+          <option value="failed">Failed</option>
+          <option value="pending">Pending</option>
+          <option value="deployed">Deployed</option>
+        </select>
+
+        <label for="editInput">Input:</label>
+        <textarea id="editInput" rows="2" required></textarea>
+
+        <label for="editProcess">Proses:</label>
+        <textarea id="editProcess" rows="2" required></textarea>
+
+        <label for="editOutput">Output:</label>
+        <textarea id="editOutput" rows="2" required></textarea>
+
+        <label for="editAlgorithm">Algoritma:</label>
+        <textarea id="editAlgorithm" rows="2" required></textarea>
+
+        <label for="editAccuracy">Akurasi:</label>
+        <input type="text" id="editAccuracy" required />
+
+        <label for="editActivity">Aktivitas Pemrosesan Data:</label>
+        <textarea id="editActivity" rows="3" required></textarea>
+
+        <button type="submit" class="btn-view">Simpan</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Data default (models awal)
+    const defaultModels = [
+    {id: 1, title: 'Prediksi Harga Rumah', target: 'Harga', category: 'Regresi', status: 'success', input: 'Luas, Lokasi', process: 'Regresi Linear', output: 'Harga', algorithm: 'Linear Regression', accuracy: '92%', activity: 'Univariate, Multivariate, Feature Engineering'},
+    {id: 2, title: 'Training Titanic', target: 'Survival', category: 'Klasifikasi', status: 'failed', input: 'Fitur Titanic', process: 'Klasifikasi', output: 'Survival', algorithm: 'Decision Tree', accuracy: '85%', activity: 'Feature Selection'},
+    {id: 3, title: 'Prediksi Cuaca', target: 'Cuaca', category: 'Regresi', status: 'ongoing', input: 'Data Cuaca', process: 'Regresi', output: 'Cuaca', algorithm: 'Random Forest', accuracy: 'N/A', activity: 'Data Cleaning'},
+    {id: 4, title: 'Deteksi Status Tiket', target: 'Status', category: 'Klasifikasi', status: 'pending', input: 'Data Tiket', process: 'Klasifikasi', output: 'Status Tiket', algorithm: 'SVM', accuracy: 'N/A', activity: 'Preprocessing'},
+    {id: 5, title: 'Model Penjualan', target: 'Penjualan', category: 'Regresi', status: 'deployed', input: 'Data Penjualan', process: 'Prediksi', output: 'Jumlah Penjualan', algorithm: 'XGBoost', accuracy: '95%', activity: 'Model Deployment'},
+    {id: 6, title: 'Analisis Sentimen', target: 'Sentimen', category: 'Klasifikasi', status: 'success', input: 'Teks', process: 'NLP', output: 'Sentimen', algorithm: 'Naive Bayes', accuracy: '90%', activity: 'Text Preprocessing'},
+    {id: 7, title: 'Prediksi Permintaan Energi', target: 'Permintaan Energi', category: 'Regresi', status: 'ongoing', input: 'Data Konsumsi Energi', process: 'Regresi', output: 'Permintaan Energi', algorithm: 'SVR', accuracy: 'N/A', activity: 'Data Normalization'},
+    {id: 8, title: 'Klasifikasi Email Spam', target: 'Spam/Not Spam', category: 'Klasifikasi', status: 'success', input: 'Isi Email', process: 'Klasifikasi', output: 'Label Spam', algorithm: 'Random Forest', accuracy: '93%', activity: 'Feature Extraction'},
+    {id: 9, title: 'Deteksi Fraud Transaksi', target: 'Fraud/Not Fraud', category: 'Klasifikasi', status: 'failed', input: 'Data Transaksi', process: 'Deteksi Anomali', output: 'Label Fraud', algorithm: 'Isolation Forest', accuracy: '88%', activity: 'Data Balancing'},
+    {id: 10, title: 'Prediksi Kecelakaan Lalu Lintas', target: 'Kecelakaan', category: 'Regresi', status: 'pending', input: 'Data Lalu Lintas', process: 'Prediksi', output: 'Jumlah Kecelakaan', algorithm: 'Neural Network', accuracy: 'N/A', activity: 'Feature Scaling'},
+    {id: 11, title: 'Segmentasi Pelanggan', target: 'Segmentasi', category: 'Clustering', status: 'deployed', input: 'Data Pelanggan', process: 'Clustering', output: 'Segmen Pelanggan', algorithm: 'K-Means', accuracy: 'N/A', activity: 'Cluster Analysis'}
+  ];
+
+
+    // Ambil data dari localStorage atau gunakan default
+    let models = JSON.parse(localStorage.getItem('models')) || defaultModels;
+
+    // Simpan ke localStorage
+    function saveModels() {
+      localStorage.setItem('models', JSON.stringify(models));
+    }
+
+    // Render list model ke grid
+    function renderModels() {
+      const grid = document.getElementById('modelGrid');
+      grid.innerHTML = '';
+      models.forEach((model, index) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.id = model.id;
+
+        // Status class sesuai value
+        const statusClass = {
+          success: 'success',
+          failed: 'failed',
+          ongoing: 'ongoing',
+          pending: 'pending',
+          deployed: 'deployed'
+        }[model.status] || '';
+
+        card.innerHTML = `
+          <h3>${model.title}</h3>
+          <p><strong>Target:</strong> ${model.target}</p>
+          <p><strong>Kategori:</strong> ${model.category}</p>
+          <p class="status ${statusClass}"><strong>Status:</strong> ${model.status}</p>
+          <div class="buttons">
+            <button class="btn-view" onclick="viewModel(${model.id})">View</button>
+            <button class="btn-edit" onclick="editModel(${model.id})">Edit</button>
+            <button class="btn-delete" onclick="deleteModel(${model.id})">Delete</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Buka modal detail model
+    function viewModel(id) {
+      const model = models.find(m => m.id === id);
+      if (!model) return alert('Model tidak ditemukan.');
+
+      document.getElementById('modalTitle').textContent = model.title;
+      document.getElementById('modalInput').textContent = model.input;
+      document.getElementById('modalProcess').textContent = model.process;
+      document.getElementById('modalOutput').textContent = model.output;
+      document.getElementById('modalAlgorithm').textContent = model.algorithm;
+      document.getElementById('modalAccuracy').textContent = model.accuracy;
+      document.getElementById('modalActivity').textContent = model.activity;
+
+      document.getElementById('viewModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('viewModal').style.display = 'none';
+    }
+
+    // Buka modal edit dan isi form dengan data model yang dipilih
+    function editModel(id) {
+      const model = models.find(m => m.id === id);
+      if (!model) return alert('Model tidak ditemukan.');
+
+      document.getElementById('editIndex').value = id;
+      document.getElementById('editTitle').value = model.title;
+      document.getElementById('editTarget').value = model.target;
+      document.getElementById('editCategory').value = model.category;
+      document.getElementById('editStatus').value = model.status;
+      document.getElementById('editInput').value = model.input;
+      document.getElementById('editProcess').value = model.process;
+      document.getElementById('editOutput').value = model.output;
+      document.getElementById('editAlgorithm').value = model.algorithm;
+      document.getElementById('editAccuracy').value = model.accuracy;
+      document.getElementById('editActivity').value = model.activity;
+
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    // Tutup modal edit
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    // Simpan perubahan dari form edit
+    function saveEdit(event) {
+      event.preventDefault();
+      const id = parseInt(document.getElementById('editIndex').value, 10);
+      const index = models.findIndex(m => m.id === id);
+      if (index === -1) return alert('Model tidak ditemukan.');
+
+      models[index] = {
+        id: id,
+        title: document.getElementById('editTitle').value.trim(),
+        target: document.getElementById('editTarget').value.trim(),
+        category: document.getElementById('editCategory').value.trim(),
+        status: document.getElementById('editStatus').value,
+        input: document.getElementById('editInput').value.trim(),
+        process: document.getElementById('editProcess').value.trim(),
+        output: document.getElementById('editOutput').value.trim(),
+        algorithm: document.getElementById('editAlgorithm').value.trim(),
+        accuracy: document.getElementById('editAccuracy').value.trim(),
+        activity: document.getElementById('editActivity').value.trim(),
+      };
+
+      saveModels();
+      renderModels();
+      closeEditModal();
+      alert('Model berhasil diperbarui.');
+    }
+
+    // Hapus model dari list
+    function deleteModel(id) {
+      if (!confirm('Yakin ingin menghapus model ini?')) return;
+      models = models.filter(m => m.id !== id);
+      saveModels();
+      renderModels();
+      alert('Model berhasil dihapus.');
+    }
+
+    // Inisialisasi render
+    renderModels();
+  </script>
+</body>
+</html>

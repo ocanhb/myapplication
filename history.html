@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>History - CollaborAML</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f0f0;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 180px;
+      background-color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+    .sidebar-header, .user-info-bar, .nav, .logout {
+      padding: 15px;
+    }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+    }
+    .sidebar-header img.logo {
+      width: 26px;
+      margin-right: 8px;
+    }
+    .sidebar-header span {
+      font-weight: bold;
+      color: #007bff;
+      font-size: 14px;
+    }
+    .user-info-bar {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+    }
+    .user-info-bar img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    .user-info-bar .name {
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .nav a {
+      display: block;
+      padding: 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      color: #007bff;
+      border: 1px solid #007bff;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .nav a.active,
+    .nav a:hover {
+      background-color: #007bff;
+      color: white;
+    }
+    .logout {
+      text-align: center;
+      padding: 10px;
+      border-top: 1px solid #eee;
+    }
+    .logout button {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 13px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 80%;
+      transition: background-color 0.3s ease;
+    }
+    .logout button:hover {
+      background-color: #c82333;
+    }
+    .main {
+      flex: 1;
+      padding: 20px;
+      background-color: #f5f5f5;
+      overflow-y: auto;
+    }
+    .card {
+      background-color: white;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 15px;
+    }
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    .btn-print, .btn-download, .btn-delete {
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      margin-right: 5px;
+      border: none;
+      color: white;
+    }
+    .btn-print {
+      background-color: #28a745;
+    }
+    .btn-download {
+      background-color: #17a2b8;
+    }
+    .btn-delete {
+      background-color: #dc3545;
+    }
+    .btn-print:hover {
+      background-color: #218838;
+    }
+    .btn-download:hover {
+      background-color: #138496;
+    }
+    .btn-delete:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div>
+        <div class="sidebar-header">
+          <img src="image/logo.png" class="logo" alt="Logo">
+          <span>COLLABORAML</span>
+        </div>
+        <div class="user-info-bar">
+          <img src="image/icon.jpg" alt="User">
+          <div class="details">
+            <div class="name">Aiko</div>
+          </div>
+        </div>
+        <div class="nav">
+          <a href="dashboard.html">Dashboard</a>
+          <a href="model.html">Modeling</a>
+          <a href="creation_entry.html">creation entry</a>
+          <a href="history.html" class="active">History</a>
+        </div>
+      </div>
+      <div class="logout"> 
+        <button onclick="alert('You have been logged out.')">Logout</button>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="card">
+        <h2>Riwayat Model dan Deployment</h2>
+        <table id="historyTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Meaningful Objectives</th>
+              <th>From</th>
+              <th>Target</th>
+              <th>Features</th>
+              <th>Jenis Data</th>
+              <th>Category</th>
+              <th>Accuracy</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Deployment</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Data history akan dimuat di sini -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+     const defaultData = [
+    {id: 1, title: 'Prediksi Harga Rumah', target: 'Harga', category: 'Regresi', status: 'success', input: 'Luas, Lokasi', process: 'Regresi Linear', output: 'Harga', algorithm: 'Linear Regression', accuracy: '92%', activity: 'Univariate, Multivariate, Feature Engineering'},
+    {id: 2, title: 'Training Titanic', target: 'Survival', category: 'Klasifikasi', status: 'failed', input: 'Fitur Titanic', process: 'Klasifikasi', output: 'Survival', algorithm: 'Decision Tree', accuracy: '85%', activity: 'Feature Selection'},
+    {id: 3, title: 'Prediksi Cuaca', target: 'Cuaca', category: 'Regresi', status: 'ongoing', input: 'Data Cuaca', process: 'Regresi', output: 'Cuaca', algorithm: 'Random Forest', accuracy: 'N/A', activity: 'Data Cleaning'},
+    {id: 4, title: 'Deteksi Status Tiket', target: 'Status', category: 'Klasifikasi', status: 'pending', input: 'Data Tiket', process: 'Klasifikasi', output: 'Status Tiket', algorithm: 'SVM', accuracy: 'N/A', activity: 'Preprocessing'},
+    {id: 5, title: 'Model Penjualan', target: 'Penjualan', category: 'Regresi', status: 'deployed', input: 'Data Penjualan', process: 'Prediksi', output: 'Jumlah Penjualan', algorithm: 'XGBoost', accuracy: '95%', activity: 'Model Deployment'},
+    {id: 6, title: 'Analisis Sentimen', target: 'Sentimen', category: 'Klasifikasi', status: 'success', input: 'Teks', process: 'NLP', output: 'Sentimen', algorithm: 'Naive Bayes', accuracy: '90%', activity: 'Text Preprocessing'},
+    {id: 7, title: 'Prediksi Permintaan Energi', target: 'Permintaan Energi', category: 'Regresi', status: 'ongoing', input: 'Data Konsumsi Energi', process: 'Regresi', output: 'Permintaan Energi', algorithm: 'SVR', accuracy: 'N/A', activity: 'Data Normalization'},
+    {id: 8, title: 'Klasifikasi Email Spam', target: 'Spam/Not Spam', category: 'Klasifikasi', status: 'success', input: 'Isi Email', process: 'Klasifikasi', output: 'Label Spam', algorithm: 'Random Forest', accuracy: '93%', activity: 'Feature Extraction'},
+    {id: 9, title: 'Deteksi Fraud Transaksi', target: 'Fraud/Not Fraud', category: 'Klasifikasi', status: 'failed', input: 'Data Transaksi', process: 'Deteksi Anomali', output: 'Label Fraud', algorithm: 'Isolation Forest', accuracy: '88%', activity: 'Data Balancing'},
+    {id: 10, title: 'Prediksi Kecelakaan Lalu Lintas', target: 'Kecelakaan', category: 'Regresi', status: 'pending', input: 'Data Lalu Lintas', process: 'Prediksi', output: 'Jumlah Kecelakaan', algorithm: 'Neural Network', accuracy: 'N/A', activity: 'Feature Scaling'},
+    {id: 11, title: 'Segmentasi Pelanggan', target: 'Segmentasi', category: 'Clustering', status: 'deployed', input: 'Data Pelanggan', process: 'Clustering', output: 'Segmen Pelanggan', algorithm: 'K-Means', accuracy: 'N/A', activity: 'Cluster Analysis'}
+  ];
+
+    const tableBody = document.querySelector('#historyTable tbody');
+
+    // Fungsi untuk buat satu baris tabel dari data
+    function createRow(index, data) {
+      return `
+        <tr>
+          <td>${index.toString().padStart(2, '0')}</td>
+          <td>${data.title}</td>
+          <td>${data.from}</td>
+          <td>${data.target}</td>
+          <td>${data.features}</td>
+          <td>${data.jenis}</td>
+          <td>${data.category}</td>
+          <td>${data.accuracy}</td>
+          <td>${data.start}</td>
+          <td>${data.end}</td>
+          <td>${data.deployment}</td>
+          <td>
+            <button class="btn-download">PDF</button>
+            <button class="btn-print">Print</button>
+            <button class="btn-delete">Delete</button>
+          </td>
+        </tr>
+      `;
+    }
+
+    // Render data ke tabel
+    function renderTable(dataArray) {
+      tableBody.innerHTML = ''; // kosongkan dulu
+      dataArray.forEach((data, i) => {
+        tableBody.insertAdjacentHTML('beforeend', createRow(i + 1, data));
+      });
+
+      // Pasang event handler lagi karena tbody baru
+      document.querySelectorAll('.btn-print').forEach(btn => btn.onclick = () => printRow(btn));
+      document.querySelectorAll('.btn-download').forEach(btn => btn.onclick = () => downloadRowToPDF(btn));
+      document.querySelectorAll('.btn-delete').forEach(btn => btn.onclick = () => deleteRow(btn));
+    }
+
+    // Ambil data dari localStorage (harus disimpan dalam format JSON string)
+    function loadHistoryData() {
+      let storedData = localStorage.getItem('history');
+      if (storedData) {
+        try {
+          const parsedData = JSON.parse(storedData);
+          if (Array.isArray(parsedData) && parsedData.length > 0) {
+            renderTable(parsedData);
+            return;
+          }
+        } catch(e) {
+          // fallback ke default
+        }
+      }
+      // Jika tidak ada data di localStorage atau error, render default
+      renderTable(defaultData);
+    }
+
+    // Simpan data ke localStorage
+    function saveHistoryData(dataArray) {
+      localStorage.setItem('history', JSON.stringify(dataArray));
+    }
+
+    // Fungsi printRow dan downloadRowToPDF sama seperti kode kamu yang sebelumnya
+    function getRowData(row) {
+      const cells = row.querySelectorAll("td");
+      return {
+        title: cells[1].innerText,
+        from: cells[2].innerText,
+        target: cells[3].innerText,
+        features: cells[4].innerText,
+        jenis: cells[5].innerText,
+        category: cells[6].innerText,
+        accuracy: cells[7].innerText,
+        start: cells[8].innerText,
+        end: cells[9].innerText,
+        deployment: cells[10].innerText
+      };
+    }
+
+    function printRow(btn) {
+      const row = btn.closest("tr");
+      const data = getRowData(row);
+      const printContent = `
+        <div style="font-family: Arial, sans-serif; margin: 20px;">
+          <h3>Riwayat Model dan Deployment</h3>
+          <p><strong>Meaningful Objectives:</strong> ${data.title}</p>
+          <p><strong>From:</strong> ${data.from}</p>
+          <p><strong>Target:</strong> ${data.target}</p>
+          <p><strong>Features:</strong> ${data.features}</p>
+          <p><strong>Jenis Data:</strong> ${data.jenis}</p>
+          <p><strong>Category:</strong> ${data.category}</p>
+          <p><strong>Accuracy:</strong> ${data.accuracy}</p>
+          <p><strong>Start:</strong> ${data.start}</p>
+          <p><strong>End:</strong> ${data.end}</p>
+          <p><strong>Deployment:</strong> ${data.deployment}</p>
+        </div>
+      `;
+      const printWindow = window.open('', '', 'height=600,width=800');
+      printWindow.document.write('<html><head><title>Print Riwayat</title></head><body>');
+      printWindow.document.write(printContent);
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    }
+
+    function downloadRowToPDF(btn) {
+      const row = btn.closest("tr");
+      const data = getRowData(row);
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFontSize(18);
+      doc.text("Riwayat Model dan Deployment", 14, 20);
+      doc.setFontSize(12);
+      doc.text(`Meaningful Objectives: ${data.title}`, 14, 30);
+      doc.text(`From: ${data.from}`, 14, 40);
+      doc.text(`Target: ${data.target}`, 14, 50);
+      doc.text(`Features: ${data.features}`, 14, 60);
+      doc.text(`Jenis Data: ${data.jenis}`, 14, 70);
+      doc.text(`Category: ${data.category}`, 14, 80);
+      doc.text(`Accuracy: ${data.accuracy}`, 14, 90);
+      doc.text(`Start: ${data.start}`, 14, 100);
+      doc.text(`End: ${data.end}`, 14, 110);
+      doc.text(`Deployment: ${data.deployment}`, 14, 120);
+
+      doc.save(`Riwayat_Model_${data.title.replace(/\s+/g, '_')}.pdf`);
+    }
+
+    // Fungsi hapus baris dan update localStorage
+    function deleteRow(btn) {
+      if (!confirm("Yakin ingin menghapus data ini?")) return;
+
+      const row = btn.closest("tr");
+      const index = Array.from(tableBody.querySelectorAll("tr")).indexOf(row);
+      let storedData = localStorage.getItem('history');
+      let dataArray = storedData ? JSON.parse(storedData) : defaultData.slice();
+
+      if (index >= 0 && index < dataArray.length) {
+        dataArray.splice(index, 1);
+        saveHistoryData(dataArray);
+        renderTable(dataArray);
+      }
+    }
+
+    // Saat halaman selesai dimuat
+    window.onload = loadHistoryData;
+  </script>
+</body>
+</html>
