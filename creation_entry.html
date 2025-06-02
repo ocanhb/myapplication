@@ -6,52 +6,64 @@
   <title>Creation Entry - CollaborAML</title>
   <style>
     * { box-sizing: border-box; }
-    body {
+     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f0f0f0;
     }
-    .container { display: flex; height: 100vh; }
+
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
     .sidebar {
-      width: 200px;
+      width: 180px;
       background-color: #fff;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     }
+
+    .sidebar-header, .user-info-bar, .nav, .logout {
+      padding: 15px;
+    }
+
     .sidebar-header {
       display: flex;
       align-items: center;
-      padding: 15px;
       border-bottom: 1px solid #eee;
     }
+
     .sidebar-header img.logo {
-      width: 30px;
-      height: 30px;
+      width: 26px;
       margin-right: 8px;
     }
+
     .sidebar-header span {
       font-weight: bold;
       color: #007bff;
       font-size: 14px;
     }
+
     .user-info-bar {
       display: flex;
       align-items: center;
-      padding: 10px 15px;
     }
+
     .user-info-bar img {
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       margin-right: 8px;
     }
-    .user-info-bar .details {
-      font-size: 12px;
+
+    .user-info-bar .name {
+      font-weight: bold;
+      font-size: 14px;
     }
-    .user-info-bar .name { font-weight: bold; }
-    .nav { padding: 10px 15px; }
+
     .nav a {
       display: block;
       padding: 8px;
@@ -63,27 +75,38 @@
       font-weight: bold;
       color: #007bff;
       border: 1px solid #007bff;
-      transition: background-color 0.2s, color 0.2s;
     }
-    .nav a.active, .nav a:hover {
+
+    .nav a.active,
+    .nav a:hover {
       background-color: #007bff;
       color: white;
     }
+
     .logout {
       text-align: center;
-      padding: 15px;
-      font-size: 13px;
-      cursor: pointer;
-      user-select: none;
+      padding: 10px;
     }
-    .logout:hover { color: red; }
+
+    .logout button {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 13px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 80%;
+    }
+
+    .logout button:hover {
+      background-color: #c82333;
+    }
+
     .main {
       flex: 1;
-      padding: 25px 30px;
+      padding: 20px;
       background-color: #f5f5f5;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
     }
     h2 {
       margin-bottom: 22px;
@@ -174,17 +197,21 @@
         <img src="image/icon.jpg" alt="User" />
         <div class="details">
           <div class="name">Aiko</div>
-          <div class="role">Owner</div>
         </div>
       </div>
       <div class="nav">
-        <a href="index.html">Dashboard</a>
+        <a href="Dashboard.html">Dashboard</a>
         <a href="model.html">Modeling</a>
         <a href="creation_entry.html" class="active">Creation Entry</a>
         <a href="history.html">History</a>
       </div>
     </div>
-    <div class="logout" onclick="alert('You have been logged out.')">Logout</div>
+    <div class="logout">
+  <a href="index.html" style="text-decoration: none;">
+    <button>Logout</button>
+  </a>
+</div>
+
   </div>
 
   <div class="main">
